@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { calculateStats, formatDuration, getWeekStart, type Session } from "./ledger.ts";
+import { calculateStats, formatDuration, getWeekStart, resolveSessionDurationSeconds, type Session } from "./ledger.ts";
 const at=(day:number,hour=9)=>new Date(2026,8,day,hour).getTime();
 const sessions:Session[]=[
  {id:"a",type:"deep",startTime:at(14),endTime:at(14,11),durationSeconds:7200,category:"Programming"},
@@ -19,4 +19,8 @@ assert.equal(stats.categories[0].name,"Programming");
 assert.equal(stats.comparison.deep,"↑ 150% vs last week");
 assert.equal(formatDuration(7265),"2h 1m");
 assert.equal(formatDuration(65,true),"00:01:05");
+assert.equal(resolveSessionDurationSeconds({mode:"timer",startTime:at(14,9),endTime:at(14,13),trackedDurationSeconds:1320}),1320);
+assert.equal(resolveSessionDurationSeconds({mode:"manual",startTime:at(14,9),endTime:at(14,13)}),14400);
+assert.equal(resolveSessionDurationSeconds({mode:"edit",startTime:at(14,9),endTime:at(14,13),originalStartTime:at(14,9),originalEndTime:at(14,13),trackedDurationSeconds:1320}),1320);
+assert.equal(resolveSessionDurationSeconds({mode:"edit",startTime:at(14,9),endTime:at(14,12),originalStartTime:at(14,9),originalEndTime:at(14,13),trackedDurationSeconds:1320}),10800);
 console.log("ledger calculations: ok");

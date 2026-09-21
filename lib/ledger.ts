@@ -2,6 +2,35 @@ export type SessionType = "deep" | "gaming";
 export const CATEGORIES = ["HVAC", "Programming", "Reading", "Marketing", "Other"] as const;
 export type Session = { id: string; type: SessionType; startTime: number; endTime: number; durationSeconds: number; category?: string; note?: string };
 
+export function resolveSessionDurationSeconds({
+  mode,
+  startTime,
+  endTime,
+  trackedDurationSeconds,
+  originalStartTime,
+  originalEndTime,
+}: {
+  mode: "timer" | "manual" | "edit";
+  startTime: number;
+  endTime: number;
+  trackedDurationSeconds?: number | null;
+  originalStartTime?: number | null;
+  originalEndTime?: number | null;
+}) {
+  if (mode === "timer" && trackedDurationSeconds != null) {
+    return Math.max(0, Math.round(trackedDurationSeconds));
+  }
+  if (
+    mode === "edit" &&
+    trackedDurationSeconds != null &&
+    startTime === originalStartTime &&
+    endTime === originalEndTime
+  ) {
+    return Math.max(0, Math.round(trackedDurationSeconds));
+  }
+  return Math.max(0, Math.round((endTime - startTime) / 1000));
+}
+
 export function getWeekStart(input: number | Date) { const d = new Date(input); d.setHours(0,0,0,0); d.setDate(d.getDate() - ((d.getDay()+6)%7)); return d; }
 export function formatDuration(seconds: number, clock = false) { const s=Math.max(0,Math.floor(seconds)); const h=Math.floor(s/3600), m=Math.floor((s%3600)/60), sec=s%60; if(clock) return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(sec).padStart(2,"0")}`; if(h && m) return `${h}h ${m}m`; if(h) return `${h}h`; return `${m}m`; }
 const sum=(items:Session[],type:SessionType)=>items.filter(s=>s.type===type).reduce((a,s)=>a+s.durationSeconds,0);
