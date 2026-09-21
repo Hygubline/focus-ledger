@@ -1,5 +1,5 @@
 export type SessionType = "deep" | "gaming";
-export const CATEGORIES = ["HVAC", "Programming", "Reading", "Marketing", "Other"] as const;
+export const CATEGORIES = ["HVAC", "Programming", "Reading", "Exercise", "Marketing", "Other"] as const;
 export type Session = { id: string; type: SessionType; startTime: number; endTime: number; durationSeconds: number; category?: string; note?: string };
 
 export function resolveSessionDurationSeconds({
