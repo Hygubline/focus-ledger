@@ -6,6 +6,7 @@ export const SESSION_CATEGORIES = [
   "Reading",
   "Exercise",
   "Meditation",
+  "Marketing",
   "Gaming",
   "Other",
 ] as const; 
